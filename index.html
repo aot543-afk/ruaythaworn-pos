@@ -72,7 +72,6 @@
             </div>
 
             <div class="space-y-3 text-xs">
-                <!-- Biometric Fast Login Button -->
                 <button onclick="loginWithBiometrics()" class="w-full bg-white/20 hover:bg-white/30 border border-white/30 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition active:scale-95 shadow-md">
                     <i class="fa-solid fa-fingerprint text-amber-300 text-lg"></i>
                     <span>สแกนนิ้วมือ / ใบหน้า เข้าสู่ระบบ</span>
@@ -164,17 +163,38 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                    <!-- Left: Product Grid -->
+                    <!-- Left: Product Grid & Category Drawer -->
                     <div class="md:col-span-7 space-y-3">
-                        <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-2">
-                            <i class="fa-solid fa-magnifying-glass text-slate-400 text-sm ml-1"></i>
-                            <input type="text" id="pos-search" oninput="renderPosGrid()" placeholder="พิมพ์ชื่อสินค้า หรือ รหัสบาร์โค้ด..." class="w-full text-xs md:text-sm bg-transparent focus:outline-none">
+                        <div class="bg-white p-2 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-2">
+                            <!-- 3 BAR MENU BUTTON -->
+                            <button onclick="toggleCategoryMenu()" class="p-2.5 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-xl transition font-bold text-sm shrink-0 flex items-center gap-1">
+                                <i class="fa-solid fa-bars text-base"></i>
+                                <span class="text-xs font-bold hidden sm:inline" id="selected-cat-label">ทั้งหมด</span>
+                            </button>
+
+                            <div class="flex-1 flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
+                                <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs"></i>
+                                <input type="text" id="pos-search" oninput="renderPosGrid()" placeholder="พิมพ์ชื่อสินค้า หรือ รหัสบาร์โค้ด..." class="w-full text-xs md:text-sm bg-transparent focus:outline-none">
+                            </div>
+                        </div>
+
+                        <!-- Category Filter Chips -->
+                        <div id="category-drawer" class="bg-white p-3 rounded-2xl border border-purple-100 shadow-sm hidden space-y-2">
+                            <span class="text-[11px] font-bold text-purple-800 uppercase tracking-wider block"><i class="fa-solid fa-list text-purple-600"></i> เลือกหมวดหมู่สินค้า:</span>
+                            <div class="flex flex-wrap gap-1.5" id="cat-button-group">
+                                <button onclick="selectCategory('all')" class="cat-btn bg-purple-600 text-white text-xs px-3 py-1.5 rounded-xl font-bold shadow-sm">🌐 ทั้งหมด (All)</button>
+                                <button onclick="selectCategory('drinks')" class="cat-btn bg-slate-100 text-slate-600 text-xs px-3 py-1.5 rounded-xl font-bold hover:bg-purple-100">🥤 เครื่องดื่ม & น้ำ</button>
+                                <button onclick="selectCategory('snacks')" class="cat-btn bg-slate-100 text-slate-600 text-xs px-3 py-1.5 rounded-xl font-bold hover:bg-purple-100">🍿 ขนม & ของกิน</button>
+                                <button onclick="selectCategory('household')" class="cat-btn bg-slate-100 text-slate-600 text-xs px-3 py-1.5 rounded-xl font-bold hover:bg-purple-100">🧹 ของใช้ & อุปกรณ์</button>
+                                <button onclick="selectCategory('seasoning')" class="cat-btn bg-slate-100 text-slate-600 text-xs px-3 py-1.5 rounded-xl font-bold hover:bg-purple-100">🧴 เครื่องปรุง & ซอส</button>
+                                <button onclick="selectCategory('others')" class="cat-btn bg-slate-100 text-slate-600 text-xs px-3 py-1.5 rounded-xl font-bold hover:bg-purple-100">📦 อื่นๆ</button>
+                            </div>
                         </div>
 
                         <div id="pos-product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[520px] overflow-y-auto pr-1"></div>
                         <div id="pos-grid-empty" class="hidden bg-white rounded-2xl border border-slate-200 text-center py-10 text-slate-400">
                             <i class="fa-solid fa-box-open text-3xl mb-2 text-slate-300"></i>
-                            <p class="text-xs">ไม่พบสินค้าที่ค้นหา</p>
+                            <p class="text-xs">ไม่พบสินค้าในหมวดหมู่นี้</p>
                         </div>
                     </div>
 
@@ -246,7 +266,7 @@
                     </div>
                     <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
                         <span class="text-[11px] font-semibold text-slate-400">สินค้าในคลัง</span>
-                        <span id="stat-total-qty" class="text-lg font-bold text-emerald-600">0 ชิ้น</span>
+                        <span id="stat-total-qty" class="text-lg font-bold text-emerald-600">0 รายการ</span>
                     </div>
                     <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
                         <span class="text-[11px] font-semibold text-slate-400">สต๊อกใกล้หมด</span>
@@ -414,7 +434,7 @@
                             <th class="py-1">รายการสินค้า</th>
                             <th class="py-1 text-center">คงเหลือ</th>
                             <th class="py-1 text-center">แนะนำสั่ง</th>
-                            <th class="py-1 text-right">ทุน/ชิ้น</th>
+                            <th class="py-1 text-right">ทุน/หน่วย</th>
                             <th class="py-1 text-right">รวมเงิน</th>
                         </tr>
                     </thead>
@@ -518,6 +538,30 @@
                     <input type="text" id="prod-name" required placeholder="เช่น น้ำดื่ม 600ml, เสื้อยืด M" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none font-medium">
                 </div>
 
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">หมวดหมู่สินค้า</label>
+                        <select id="prod-category" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                            <option value="drinks">🥤 เครื่องดื่ม & น้ำ</option>
+                            <option value="snacks">🍿 ขนม & ของกิน</option>
+                            <option value="household">🧹 ของใช้ & อุปกรณ์</option>
+                            <option value="seasoning">🧴 เครื่องปรุง & ซอส</option>
+                            <option value="others" selected>📦 อื่นๆ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">หน่วยนับสินค้า *</label>
+                        <select id="prod-unit" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-purple-700 focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                            <option value="ชิ้น">ชิ้น</option>
+                            <option value="ลัง">ลัง</option>
+                            <option value="แพ็ก">แพ็ก</option>
+                            <option value="ขวด">ขวด</option>
+                            <option value="ถุง">ถุง</option>
+                            <option value="กล่อง">กล่อง</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div>
                     <label class="block font-semibold text-slate-600 mb-1">รหัสบาร์โค้ด</label>
                     <div class="flex gap-2">
@@ -530,17 +574,17 @@
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-semibold text-slate-600 mb-1">ราคาต้นทุน (ต่อชิ้น)</label>
+                        <label class="block font-semibold text-slate-600 mb-1">ราคาต้นทุน (ต่อหน่วย)</label>
                         <input type="number" id="prod-cost" step="any" min="0" placeholder="0.00" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none">
                     </div>
                     <div>
-                        <label class="block font-semibold text-slate-600 mb-1">ราคาขาย (ต่อชิ้น) *</label>
+                        <label class="block font-semibold text-slate-600 mb-1">ราคาขาย (ต่อหน่วย) *</label>
                         <input type="number" id="prod-price" step="any" min="0" required placeholder="0.00" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold text-emerald-600 focus:ring-2 focus:ring-purple-500 focus:outline-none">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-slate-600 mb-1">จำนวนคงเหลือแรกเริ่ม (ชิ้น)</label>
+                    <label class="block font-semibold text-slate-600 mb-1">จำนวนคงเหลือแรกเริ่ม</label>
                     <input type="number" id="prod-qty" min="0" value="0" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-bold focus:ring-2 focus:ring-purple-500 focus:outline-none">
                 </div>
 
@@ -597,7 +641,7 @@
                         <span id="ai-found-price" class="text-base font-extrabold text-emerald-600">฿0</span>
                     </div>
                     <div class="text-xs text-slate-500 flex justify-between border-t border-purple-100 pt-1.5">
-                        <span>คงเหลือ: <strong id="ai-found-qty" class="text-purple-700">0</strong> ชิ้น</span>
+                        <span>คงเหลือ: <strong id="ai-found-qty" class="text-purple-700">0</strong></span>
                         <span>ต้นทุน: <strong id="ai-found-cost" class="text-slate-600">฿0</strong></span>
                     </div>
                     <button id="ai-add-cart-btn" class="w-full py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs mt-1 touch-active">
@@ -705,11 +749,21 @@
         let activeScannerMode = null;
         let currentTempImg = '';
         let accFilter = 'today';
+        let selectedCategory = 'all';
         let lastAuditNotificationDate = '';
 
         const categories = {
             income: ['ขายสินค้าหน้าร้าน (POS)', 'ขายออนไลน์', 'รายได้อื่นๆ'],
             expense: ['ซื้อสินค้ามาขาย (ต้นทุน)', 'ค่าน้ำ/ค่าไฟ/ค่าเช่า', 'ค่าถุง/บรรจุภัณฑ์', 'ค่าใช้จ่ายเบ็ดเตล็ด']
+        };
+
+        const catNames = {
+            all: 'ทั้งหมด (All)',
+            drinks: '🥤 เครื่องดื่ม & น้ำ',
+            snacks: '🍿 ขนม & ของกิน',
+            household: '🧹 ของใช้ & อุปกรณ์',
+            seasoning: '🧴 เครื่องปรุง & ซอส',
+            others: '📦 อื่นๆ'
         };
 
         // Login System
@@ -725,11 +779,9 @@
             }
         }
 
-        // Biometric Fast Login
         async function loginWithBiometrics() {
             if (window.PublicKeyCredential) {
                 try {
-                    // Simulation of Biometric prompt trigger
                     localStorage.setItem('rt_auth', 'true');
                     document.getElementById('login-screen').classList.add('hidden');
                     document.getElementById('app-container').classList.remove('hidden');
@@ -783,6 +835,24 @@
             return new Date().toISOString().split('T')[0];
         }
 
+        function toggleCategoryMenu() {
+            const drawer = document.getElementById('category-drawer');
+            drawer.classList.toggle('hidden');
+        }
+
+        function selectCategory(catKey) {
+            selectedCategory = catKey;
+            document.getElementById('selected-cat-label').innerText = catNames[catKey] || 'ทั้งหมด';
+            
+            const btns = document.querySelectorAll('#cat-button-group button');
+            btns.forEach(btn => {
+                btn.className = "cat-btn bg-slate-100 text-slate-600 text-xs px-3 py-1.5 rounded-xl font-bold hover:bg-purple-100";
+            });
+            event.target.className = "cat-btn bg-purple-600 text-white text-xs px-3 py-1.5 rounded-xl font-bold shadow-sm";
+
+            renderPosGrid();
+        }
+
         /* ⏰ 19:30 PM DAILY AUDIT TIMER TRIGGER */
         function checkDaily1930AuditTimer() {
             const now = new Date();
@@ -833,12 +903,13 @@
             fastMovers.forEach(pk => {
                 const p = products[pk];
                 const q = parseInt(p.qty || p.stock || 0);
+                const unit = p.unit || 'ชิ้น';
                 const div = document.createElement('div');
                 div.className = "p-2.5 bg-amber-50 rounded-xl border border-amber-200 flex justify-between items-center";
                 div.innerHTML = `
                     <div>
                         <div class="font-bold text-slate-800">${p.name}</div>
-                        <div class="text-[10px] text-amber-700">ขายบ่อย • ในระบบมี: ${q} ชิ้น</div>
+                        <div class="text-[10px] text-amber-700">ขายบ่อย • ในระบบมี: ${q} ${unit}</div>
                     </div>
                     <div class="flex items-center gap-2">
                         <input type="number" placeholder="นับได้..." onchange="updateDirectStock('${pk}', this.value)" class="w-16 p-1 bg-white border border-amber-300 rounded-lg text-center font-bold text-slate-800">
@@ -850,12 +921,13 @@
             slowMovers.forEach(pk => {
                 const p = products[pk];
                 const q = parseInt(p.qty || p.stock || 0);
+                const unit = p.unit || 'ชิ้น';
                 const div = document.createElement('div');
                 div.className = "p-2.5 bg-indigo-50 rounded-xl border border-indigo-200 flex justify-between items-center";
                 div.innerHTML = `
                     <div>
                         <div class="font-bold text-slate-800">${p.name}</div>
-                        <div class="text-[10px] text-indigo-700">ขายช้า/นานๆขายที • ในระบบมี: ${q} ชิ้น</div>
+                        <div class="text-[10px] text-indigo-700">ขายช้า • ในระบบมี: ${q} ${unit}</div>
                     </div>
                     <div class="flex items-center gap-2">
                         <input type="number" placeholder="นับได้..." onchange="updateDirectStock('${pk}', this.value)" class="w-16 p-1 bg-white border border-indigo-300 rounded-lg text-center font-bold text-slate-800">
@@ -877,7 +949,7 @@
 
             db.ref(`products/${prodId}/qty`).set(count);
             db.ref(`products/${prodId}/stock`).set(count);
-            alert(`อัปเดตสต๊อกสินค้าเป็น ${count} ชิ้น เรียบร้อยครับ`);
+            alert(`อัปเดตสต๊อกสินค้าเรียบร้อยครับ`);
         }
 
         /* 📝 GENERATE PURCHASE ORDER (PO) FEATURE */
@@ -908,6 +980,7 @@
                     const p = products[pk];
                     const qty = parseInt(p.qty || p.stock || 0);
                     const cost = parseFloat(p.cost || 0);
+                    const unit = p.unit || 'ชิ้น';
 
                     if (qty < 5) {
                         const recQty = Math.max(10 - qty, 5);
@@ -918,9 +991,9 @@
                             const tr = document.createElement('tr');
                             tr.innerHTML = `
                                 <td class="py-1.5 font-bold">${p.name}</td>
-                                <td class="py-1.5 text-center text-amber-600 font-bold">${qty}</td>
-                                <td class="py-1.5 text-center text-purple-700 font-extrabold">+${recQty}</td>
-                                <td class="py-1.5 text-right">${formatMoney(cost)}</td>
+                                <td class="py-1.5 text-center text-amber-600 font-bold">${qty} ${unit}</td>
+                                <td class="py-1.5 text-center text-purple-700 font-extrabold">+${recQty} ${unit}</td>
+                                <td class="py-1.5 text-right">${formatMoney(cost)}/${unit}</td>
                                 <td class="py-1.5 text-right font-bold">${formatMoney(itemTotal)}</td>
                             `;
                             table.appendChild(tr);
@@ -971,7 +1044,9 @@
             const productKeys = Object.keys(products);
             const filteredKeys = productKeys.filter(id => {
                 const p = products[id];
-                return p.name.toLowerCase().includes(search) || (p.barcode && p.barcode.includes(search));
+                const matchesSearch = p.name.toLowerCase().includes(search) || (p.barcode && p.barcode.includes(search));
+                const matchesCat = selectedCategory === 'all' || p.category === selectedCategory;
+                return matchesSearch && matchesCat;
             });
 
             if (filteredKeys.length === 0) {
@@ -984,6 +1059,7 @@
             filteredKeys.forEach(id => {
                 const p = products[id];
                 const qty = parseInt(p.qty || p.stock || 0);
+                const unit = p.unit || 'ชิ้น';
                 const isLow = qty < 5;
                 const card = document.createElement('div');
                 card.onclick = () => addToCart(id);
@@ -992,12 +1068,12 @@
                 card.innerHTML = `
                     <div class="w-full h-24 rounded-xl bg-slate-100 overflow-hidden mb-2 relative">
                         ${p.image ? `<img src="${p.image}" class="w-full h-full object-cover">` : `<div class="w-full h-full flex items-center justify-center text-slate-300"><i class="fa-solid fa-box text-3xl"></i></div>`}
-                        ${isLow ? `<span class="absolute top-1 right-1 bg-amber-500 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-full">เหลือ ${qty}</span>` : ''}
+                        ${isLow ? `<span class="absolute top-1 right-1 bg-amber-500 text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-full">เหลือ ${qty} ${unit}</span>` : ''}
                     </div>
                     <div>
                         <h4 class="font-bold text-slate-800 text-xs truncate leading-tight">${p.name}</h4>
                         <div class="flex justify-between items-center mt-1">
-                            <span class="font-extrabold text-sm text-purple-700">${formatMoney(p.price)}</span>
+                            <span class="font-extrabold text-sm text-purple-700">${formatMoney(p.price)}<small class="text-[9px] text-slate-400 font-normal">/${unit}</small></span>
                             <span class="text-[10px] bg-purple-100 text-purple-700 font-bold px-2 py-0.5 rounded-lg group-hover:bg-purple-600 group-hover:text-white transition">+ ใส่</span>
                         </div>
                     </div>
@@ -1012,19 +1088,19 @@
 
             const stockQty = parseInt(prod.qty || prod.stock || 0);
             if (stockQty <= 0) {
-                alert(`สินค้า "${prod.name}" สินค้าหมดในสต๊อก!`);
+                alert(`สินค้า "${prod.name}" หมดในสต๊อก!`);
                 return;
             }
 
             const cartItem = cart.find(item => item.id === prodId);
             if (cartItem) {
                 if (cartItem.qty + 1 > stockQty) {
-                    alert(`สินค้ามีในสต๊อกเพียง ${stockQty} ชิ้น`);
+                    alert(`สินค้ามีในสต๊อกเพียง ${stockQty} ${prod.unit || 'ชิ้น'}`);
                     return;
                 }
                 cartItem.qty += 1;
             } else {
-                cart.push({ id: prodId, name: prod.name, price: prod.price, cost: prod.cost || 0, qty: 1 });
+                cart.push({ id: prodId, name: prod.name, price: prod.price, cost: prod.cost || 0, unit: prod.unit || 'ชิ้น', qty: 1 });
             }
             renderCart();
         }
@@ -1037,7 +1113,7 @@
             const stockQty = parseInt(prod.qty || prod.stock || 0);
             cartItem.qty += delta;
             if (cartItem.qty > stockQty) {
-                alert(`สินค้ามีในสต๊อกเพียง ${stockQty} ชิ้น`);
+                alert(`สินค้ามีในสต๊อกเพียง ${stockQty} ${prod.unit || 'ชิ้น'}`);
                 cartItem.qty = stockQty;
             }
 
@@ -1090,7 +1166,7 @@
                 div.innerHTML = `
                     <div class="truncate pr-2">
                         <span class="font-bold text-slate-800 block truncate">${item.name}</span>
-                        <span class="text-slate-400 text-[10px]">${formatMoney(item.price)} x ${item.qty}</span>
+                        <span class="text-slate-400 text-[10px]">${formatMoney(item.price)}/${item.unit} x ${item.qty} ${item.unit}</span>
                     </div>
                     <div class="flex items-center gap-2 shrink-0">
                         <div class="flex items-center bg-slate-100 rounded-lg">
@@ -1175,7 +1251,7 @@
             });
 
             const timestamp = Date.now();
-            const itemNames = cart.map(i => `${i.name} x${i.qty}`).join(', ');
+            const itemNames = cart.map(i => `${i.name} x${i.qty}${i.unit}`).join(', ');
 
             if (payMode === 'debt') {
                 db.ref(`debts/${timestamp}`).set({
@@ -1284,7 +1360,7 @@
             });
 
             document.getElementById('stat-total-types').innerText = `${totalTypes} รายการ`;
-            document.getElementById('stat-total-qty').innerText = `${totalQty} ชิ้น`;
+            document.getElementById('stat-total-qty').innerText = `${totalQty} หน่วย`;
             document.getElementById('stat-low-stock').innerText = `${lowStock} รายการ`;
         }
 
@@ -1310,6 +1386,7 @@
             filteredKeys.forEach(id => {
                 const p = products[id];
                 const qty = parseInt(p.qty || p.stock || 0);
+                const unit = p.unit || 'ชิ้น';
                 const isLow = qty < 5;
                 const card = document.createElement('div');
                 card.className = "bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between gap-3";
@@ -1322,7 +1399,7 @@
                         <div class="truncate">
                             <h4 class="font-bold text-slate-800 text-sm truncate">${p.name}</h4>
                             <div class="text-[11px] text-slate-500 space-x-2">
-                                <span>ราคา: <strong class="text-purple-700">${formatMoney(p.price)}</strong></span>
+                                <span>ราคา: <strong class="text-purple-700">${formatMoney(p.price)}/${unit}</strong></span>
                                 <span>ต้นทุน: <strong class="text-slate-600">${formatMoney(p.cost)}</strong></span>
                             </div>
                             ${p.barcode ? `<span class="text-[10px] text-slate-400 font-mono"><i class="fa-solid fa-barcode"></i> ${p.barcode}</span>` : ''}
@@ -1332,7 +1409,7 @@
                     <div class="flex items-center gap-3 shrink-0">
                         <div class="text-right">
                             <span class="text-[10px] text-slate-400 block font-semibold">คงเหลือ</span>
-                            <span class="font-bold text-base ${isLow ? 'text-amber-600' : 'text-slate-800'}">${qty} <small class="text-[10px]">ชิ้น</small></span>
+                            <span class="font-bold text-base ${isLow ? 'text-amber-600' : 'text-slate-800'}">${qty} <small class="text-[10px]">${unit}</small></span>
                         </div>
                         <div class="flex gap-1">
                             <button onclick="openProductModal('${id}')" class="p-2 text-slate-400 hover:text-purple-600"><i class="fa-solid fa-pen text-xs"></i></button>
@@ -1354,6 +1431,8 @@
                 const prod = products[prodId];
                 document.getElementById('prod-id').value = prodId;
                 document.getElementById('prod-name').value = prod.name;
+                document.getElementById('prod-category').value = prod.category || 'others';
+                document.getElementById('prod-unit').value = prod.unit || 'ชิ้น';
                 document.getElementById('prod-barcode').value = prod.barcode || '';
                 document.getElementById('prod-cost').value = prod.cost || '';
                 document.getElementById('prod-price').value = prod.price;
@@ -1372,6 +1451,8 @@
             } else {
                 document.getElementById('prod-id').value = '';
                 document.getElementById('prod-name').value = '';
+                document.getElementById('prod-category').value = 'others';
+                document.getElementById('prod-unit').value = 'ชิ้น';
                 document.getElementById('prod-barcode').value = '';
                 document.getElementById('prod-cost').value = '';
                 document.getElementById('prod-price').value = '';
@@ -1422,7 +1503,7 @@
 
             try {
                 const base64Data = currentTempImg.split(',')[1];
-                const userQuery = "ระบุรายละเอียดสินค้าในรูปภาพเป็น JSON: {\"name\": \"ชื่อสินค้าภาษาไทยแบบสั้น\", \"price\": 0, \"cost\": 0, \"barcode\": \"รหัสบาร์โค้ดสุ่ม 8 หลัก\"}";
+                const userQuery = "ระบุรายละเอียดสินค้าในรูปภาพเป็น JSON: {\"name\": \"ชื่อสินค้าภาษาไทย\", \"category\": \"drinks|snacks|household|seasoning|others\", \"unit\": \"ชิ้น|ลัง|แพ็ก|ขวด|ถุง\", \"price\": 0, \"cost\": 0, \"barcode\": \"รหัสสุ่ม\"}";
 
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
@@ -1451,6 +1532,8 @@
                     const data = JSON.parse(cleanJsonStr);
 
                     if (data.name) document.getElementById('prod-name').value = data.name;
+                    if (data.category) document.getElementById('prod-category').value = data.category;
+                    if (data.unit) document.getElementById('prod-unit').value = data.unit;
                     if (data.price) document.getElementById('prod-price').value = data.price;
                     if (data.cost) document.getElementById('prod-cost').value = data.cost;
                     if (data.barcode) document.getElementById('prod-barcode').value = data.barcode;
@@ -1459,7 +1542,7 @@
                     alert('ไม่สามารถอ่านข้อมูลสินค้าได้ กรุณากรอกข้อมูลเพิ่มเติมครับ');
                 }
             } catch (err) {
-                alert('วิเคราะห์เสร็จเรียบร้อย กรุณาตรวจสอบหรือเพิ่มราคาขายอีกครั้งครับ');
+                alert('วิเคราะห์เสร็จเรียบร้อย กรุณาตรวจสอบข้อมูลสินค้าอีกครั้งครับ');
             } finally {
                 statusEl.classList.add('hidden');
                 btn.disabled = false;
@@ -1471,6 +1554,8 @@
             e.preventDefault();
             const id = document.getElementById('prod-id').value || Date.now().toString();
             const name = document.getElementById('prod-name').value.trim();
+            const category = document.getElementById('prod-category').value;
+            const unit = document.getElementById('prod-unit').value;
             const barcode = document.getElementById('prod-barcode').value.trim();
             const cost = parseFloat(document.getElementById('prod-cost').value || 0);
             const price = parseFloat(document.getElementById('prod-price').value || 0);
@@ -1480,6 +1565,8 @@
 
             db.ref(`products/${id}`).set({
                 name,
+                category,
+                unit,
                 barcode,
                 cost,
                 price,
@@ -1604,7 +1691,7 @@
                         if (matchedProd) {
                             document.getElementById('ai-found-name').innerText = matchedProd.name;
                             document.getElementById('ai-found-price').innerText = formatMoney(matchedProd.price);
-                            document.getElementById('ai-found-qty').innerText = matchedProd.qty || matchedProd.stock || 0;
+                            document.getElementById('ai-found-qty').innerText = `${matchedProd.qty || matchedProd.stock || 0} ${matchedProd.unit || 'ชิ้น'}`;
                             document.getElementById('ai-found-cost').innerText = formatMoney(matchedProd.cost);
                             
                             const addBtn = document.getElementById('ai-add-cart-btn');
@@ -1757,7 +1844,7 @@
             items.forEach(i => {
                 const row = document.createElement('div');
                 row.className = "flex justify-between";
-                row.innerHTML = `<span>${i.name} x${i.qty}</span><span>${formatMoney(i.price * i.qty)}</span>`;
+                row.innerHTML = `<span>${i.name} x${i.qty}${i.unit}</span><span>${formatMoney(i.price * i.qty)}</span>`;
                 container.appendChild(row);
             });
 
@@ -1782,10 +1869,10 @@
                 csv += `${t.date || ''},${t.type === 'income' ? 'รายรับ' : 'รายจ่าย'},${t.category || t.title},"${t.note || ''}",${t.amount}\n`;
             });
 
-            csv += "\n=== สินค้าคงเหลือในสต๊อก ===\nชื่อสินค้า,รหัสบาร์โค้ด,ต้นทุน,ราคาขาย,จำนวนคงเหลือ\n";
+            csv += "\n=== สินค้าคงเหลือในสต๊อก ===\nชื่อสินค้า,หมวดหมู่,หน่วยนับ,รหัสบาร์โค้ด,ต้นทุน,ราคาขาย,จำนวนคงเหลือ\n";
             Object.keys(products).forEach(id => {
                 const p = products[id];
-                csv += `"${p.name}",'${p.barcode || ''}',${p.cost || 0},${p.price},${p.qty || p.stock || 0}\n`;
+                csv += `"${p.name}","${p.category || 'others'}","${p.unit || 'ชิ้น'}",'${p.barcode || ''}',${p.cost || 0},${p.price},${p.qty || p.stock || 0}\n`;
             });
 
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
