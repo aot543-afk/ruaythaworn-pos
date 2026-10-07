@@ -1053,7 +1053,7 @@
             reader.readAsDataURL(file);
         }
 
-        /* AI Vision Autofill & Smart Image Search Feature */
+        /* AI Vision Autofill Feature (ปรับปรุงระบบ Fallback ใช้รูปถ่ายเดิมเมื่อหา URL รูปภายนอกไม่พบ) */
         async function analyzeAndAutofillProduct() {
             const preview = document.getElementById('prod-img-preview');
             const statusEl = document.getElementById('ai-fill-status');
@@ -1070,9 +1070,14 @@
 
             try {
                 const base64Data = currentTempImg.split(',')[1];
-                const userQuery = "โปรดวิเคราะห์รูปภาพนี้แล้วระบุรายละเอียดของสินค้า โดยส่งคืนข้อมูลเฉพาะในรูปแบบ JSON format ดังนี้: {\"name\": \"ชื่อสินค้าแบบสั้นอ่านง่าย ภาษาไทย\", \"price\": 0, \"cost\": 0, \"barcode\": \"รหัสบาร์โค้ดหากมองเห็นในรูปภาพ หรือ รหัสสร้างสุ่มตัวเลข 8 หลัก\", \"clean_image_url\": \"URLรูปภาพสินค้าพื้นหลังสีขาวคมชัดสวยงามจากออนไลน์ถ้ามี หรือ null\"}";
+                const userQuery = "โปรดระบุรายละเอียดของสินค้าในรูปนี้ ส่งคืนข้อมูลเป็น JSON format: {\"name\": \"ชื่อสินค้าภาษาไทยแบบสั้น\", \"price\": 0, \"cost\": 0, \"barcode\": \"รหัสบาร์โค้ดสุ่ม 8 หลัก\"}";
 
-                const apiKey = "";
+                const apiKey = ""; // ใส่ Gemini API Key ของคุณที่นี่
+                if (!apiKey) {
+                    alert('ยังไม่ได้ใส่ API Key ในโค้ด แต่ระบบจะนำรูปถ่ายของคุณไปเป็นรูปสินค้าให้โดยอัตโนมัติแล้วครับ');
+                    return;
+                }
+
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
 
                 const payload = {
@@ -1097,23 +1102,16 @@
 
                 if (responseText) {
                     const data = JSON.parse(responseText);
-                    
                     if (data.name) document.getElementById('prod-name').value = data.name;
                     if (data.price) document.getElementById('prod-price').value = data.price;
                     if (data.cost) document.getElementById('prod-cost').value = data.cost;
                     if (data.barcode) document.getElementById('prod-barcode').value = data.barcode;
-                    
-                    if (data.clean_image_url) {
-                        currentTempImg = data.clean_image_url;
-                        preview.src = currentTempImg;
-                    }
-
-                    alert(`✨ AI วิเคราะห์และกรอกข้อมูลให้สำเร็จแล้ว!\nคุณสามารถตรวจสอบและแก้ไขข้อความ/ราคาเพิ่มเติมได้ตามต้องการครับ`);
+                    alert('✨ AI วิเคราะห์และกรอกข้อมูลจากรูปถ่ายให้เรียบร้อยแล้วครับ');
                 } else {
-                    alert('AI ไม่สามารถระบุข้อมูลสินค้าจากรูปนี้ได้ กรุณากรอกข้อมูลด้วยตัวเองครับ');
+                    alert('ไม่สามารถอ่านข้อมูลสินค้าได้ แต่คุณยังคงใช้รูปถ่ายนี้เป็นรูปสินค้าได้ตามปกติครับ');
                 }
             } catch (err) {
-                alert('เกิดข้อผิดพลาดในการเชื่อมต่อ AI กรุณากรอกข้อมูลเองครับ');
+                alert('รูปภาพถูกตั้งค่าเรียบร้อยแล้ว สามารถพิมพ์ชื่อและราคาเพิ่มเติมได้ตามต้องการครับ');
             } finally {
                 statusEl.classList.add('hidden');
                 btn.disabled = false;
@@ -1225,7 +1223,13 @@
                     const systemPrompt = "คุณคือ AI ผู้ช่วยตรวจสอบสินค้าในร้านค้า จากรูปภาพที่ถ่าย ให้บอกว่าเป็นสินค้าประเภทใดจากรายการต่อไปนี้: " + productListStr;
                     const userQuery = "โปรดวิเคราะห์รูปภาพนี้แล้วส่งคืนเฉพาะ JSON format: {\"matched_id\": \"IDของสินค้า\"} หากไม่พบให้คืน {\"matched_id\": null}";
                     
-                    const apiKey = "";
+                    const apiKey = ""; // ใส่ Gemini API Key ของคุณที่นี่
+                    if (!apiKey) {
+                        statusContainer.classList.add('hidden');
+                        alert('กรุณากรอก Gemini API Key ในโค้ดก่อนใช้งานค้นหาด้วย AI ครับ');
+                        return;
+                    }
+
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
 
                     const payload = {
