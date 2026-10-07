@@ -535,6 +535,9 @@
     </div>
 
     <script>
+        // Global Gemini API Key Inserted
+        const GEMINI_API_KEY = "AQ.Ab8RN6J5LKtHAkG_McunGI4HkBhBaCYICI8YCq6ukDXzvwSnHQ";
+
         // Firebase Configuration
         const firebaseConfig = {
             databaseURL: "https://ruaythaworn-pos-default-rtdb.asia-southeast1.firebasedatabase.app/"
@@ -1053,7 +1056,7 @@
             reader.readAsDataURL(file);
         }
 
-        /* AI Vision Autofill Feature (ปรับปรุงระบบ Fallback ใช้รูปถ่ายเดิมเมื่อหา URL รูปภายนอกไม่พบ) */
+        /* AI Vision Autofill Feature */
         async function analyzeAndAutofillProduct() {
             const preview = document.getElementById('prod-img-preview');
             const statusEl = document.getElementById('ai-fill-status');
@@ -1072,13 +1075,7 @@
                 const base64Data = currentTempImg.split(',')[1];
                 const userQuery = "โปรดระบุรายละเอียดของสินค้าในรูปนี้ ส่งคืนข้อมูลเป็น JSON format: {\"name\": \"ชื่อสินค้าภาษาไทยแบบสั้น\", \"price\": 0, \"cost\": 0, \"barcode\": \"รหัสบาร์โค้ดสุ่ม 8 หลัก\"}";
 
-                const apiKey = ""; // ใส่ Gemini API Key ของคุณที่นี่
-                if (!apiKey) {
-                    alert('ยังไม่ได้ใส่ API Key ในโค้ด แต่ระบบจะนำรูปถ่ายของคุณไปเป็นรูปสินค้าให้โดยอัตโนมัติแล้วครับ');
-                    return;
-                }
-
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
                 const payload = {
                     contents: [{
@@ -1222,15 +1219,8 @@
                     const productListStr = Object.keys(products).map(id => `[ID:${id}, ชื่อ:${products[id].name}]`).join(', ');
                     const systemPrompt = "คุณคือ AI ผู้ช่วยตรวจสอบสินค้าในร้านค้า จากรูปภาพที่ถ่าย ให้บอกว่าเป็นสินค้าประเภทใดจากรายการต่อไปนี้: " + productListStr;
                     const userQuery = "โปรดวิเคราะห์รูปภาพนี้แล้วส่งคืนเฉพาะ JSON format: {\"matched_id\": \"IDของสินค้า\"} หากไม่พบให้คืน {\"matched_id\": null}";
-                    
-                    const apiKey = ""; // ใส่ Gemini API Key ของคุณที่นี่
-                    if (!apiKey) {
-                        statusContainer.classList.add('hidden');
-                        alert('กรุณากรอก Gemini API Key ในโค้ดก่อนใช้งานค้นหาด้วย AI ครับ');
-                        return;
-                    }
 
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
                     const payload = {
                         contents: [{
