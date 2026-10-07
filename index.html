@@ -140,11 +140,11 @@
             <div id="tab-pos" class="space-y-4">
                 <!-- Quick POS Header Tools -->
                 <div class="grid grid-cols-2 gap-2.5">
-                    <button onclick="startBarcodeScanner('pos')" class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white p-3.5 rounded-2xl shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 font-bold text-sm touch-active">
-                        <i class="fa-solid fa-barcode text-xl"></i>
+                    <button onclick="startBarcodeScanner('pos')" class="bg-gradient-to-r from-violet-600 to-purple-700 hover:from-violet-700 hover:to-purple-800 text-white p-3.5 rounded-2xl shadow-lg shadow-purple-600/20 flex items-center justify-center gap-2 font-bold text-sm touch-active">
+                        <i class="fa-solid fa-barcode text-xl text-amber-300"></i>
                         <span>📷 สแกนบาร์โค้ดขาย</span>
                     </button>
-                    <button onclick="openAISearchModal()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white p-3.5 rounded-2xl shadow-lg shadow-purple-600/20 flex items-center justify-center gap-2 font-bold text-sm touch-active">
+                    <button onclick="openAISearchModal()" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white p-3.5 rounded-2xl shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2 font-bold text-sm touch-active">
                         <i class="fa-solid fa-wand-magic-sparkles text-xl text-amber-300"></i>
                         <span>✨ AI ค้นหาจากรูปภาพ</span>
                     </button>
@@ -342,31 +342,38 @@
             <form onsubmit="saveProduct(event)" class="p-5 space-y-3.5 overflow-y-auto flex-1 text-xs">
                 <input type="hidden" id="prod-id">
 
-                <!-- Product Image Upload Preview -->
-                <div class="flex flex-col items-center justify-center">
-                    <div class="relative w-28 h-28 bg-slate-100 rounded-2xl overflow-hidden border-2 border-dashed border-slate-300 flex items-center justify-center mb-2 group">
+                <!-- Product Image Upload Preview & Smart AI Autofill Button -->
+                <div class="flex flex-col items-center justify-center bg-purple-50/50 p-3 rounded-2xl border border-purple-100 space-y-2">
+                    <div class="relative w-28 h-28 bg-white rounded-2xl overflow-hidden border-2 border-dashed border-purple-300 flex items-center justify-center shadow-inner group">
                         <img id="prod-img-preview" src="" class="w-full h-full object-cover hidden">
-                        <div id="prod-img-placeholder" class="text-center text-slate-400">
-                            <i class="fa-solid fa-camera text-2xl mb-1"></i>
-                            <span class="block text-[10px]">ถ่ายรูป/ใส่รูป</span>
+                        <div id="prod-img-placeholder" class="text-center text-slate-400 p-2">
+                            <i class="fa-solid fa-camera text-2xl mb-1 text-purple-400"></i>
+                            <span class="block text-[10px] font-semibold text-slate-500">ถ่ายรูป/เลือกรูป</span>
                         </div>
                         <input type="file" id="prod-img-input" accept="image/*" capture="environment" onchange="handleImageUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer">
                     </div>
-                    <button type="button" onclick="document.getElementById('prod-img-input').click()" class="text-[11px] font-bold text-purple-600 hover:text-purple-800">
-                        <i class="fa-solid fa-upload"></i> เลือกรูปสินค้า
-                    </button>
+                    
+                    <div class="flex gap-2 w-full">
+                        <button type="button" onclick="document.getElementById('prod-img-input').click()" class="flex-1 py-2 bg-white border border-purple-200 rounded-xl font-bold text-purple-700 shadow-sm hover:bg-purple-100 transition flex items-center justify-center gap-1 text-[11px]">
+                            <i class="fa-solid fa-upload"></i> เลือกรูป
+                        </button>
+                        <button type="button" onclick="analyzeAndAutofillProduct()" id="ai-autofill-btn" class="flex-1 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-bold shadow-md hover:from-purple-700 hover:to-indigo-700 transition flex items-center justify-center gap-1 text-[11px] touch-active">
+                            <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> ✨ AI กรอกข้อมูล
+                        </button>
+                    </div>
+                    <span id="ai-fill-status" class="text-[10px] font-semibold text-purple-600 hidden animate-pulse">กำลังใช้ AI วิเคราะห์และใส่ข้อมูลสินค้า...</span>
                 </div>
 
                 <div>
                     <label class="block font-semibold text-slate-600 mb-1">ชื่อสินค้า *</label>
-                    <input type="text" id="prod-name" required placeholder="เช่น น้ำดื่ม 600ml, เสื้อยืด M" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    <input type="text" id="prod-name" required placeholder="เช่น น้ำดื่ม 600ml, เสื้อยืด M" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none font-medium">
                 </div>
 
                 <div>
                     <label class="block font-semibold text-slate-600 mb-1">รหัสบาร์โค้ด</label>
                     <div class="flex gap-2">
-                        <input type="text" id="prod-barcode" placeholder="สแกนหรือพิมพ์บาร์โค้ด..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none">
-                        <button type="button" onclick="startBarcodeScanner('form')" class="bg-orange-500 hover:bg-orange-600 text-white px-3 rounded-xl font-bold shrink-0 touch-active" title="สแกนด้วยกล้อง">
+                        <input type="text" id="prod-barcode" placeholder="สแกนหรือพิมพ์บาร์โค้ด..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:outline-none font-mono">
+                        <button type="button" onclick="startBarcodeScanner('form')" class="bg-purple-600 hover:bg-purple-700 text-white px-3 rounded-xl font-bold shrink-0 touch-active" title="สแกนด้วยกล้อง">
                             <i class="fa-solid fa-barcode"></i>
                         </button>
                     </div>
@@ -395,17 +402,17 @@
         </div>
     </div>
 
-    <!-- CAMERA BARCODE SCANNER MODAL -->
-    <div id="barcode-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl">
-            <div class="px-4 py-3 bg-orange-500 text-white flex justify-between items-center">
-                <span class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-barcode"></i> กล้องสแกนบาร์โค้ด</span>
-                <button onclick="closeBarcodeScanner()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <!-- CAMERA BARCODE SCANNER MODAL (ปรับเปลี่ยนธีมพื้นหลังเป็น Slate Neon ม่วงเข้ม) -->
+    <div id="barcode-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-slate-900 border border-purple-500/30 w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl shadow-purple-900/40">
+            <div class="px-4 py-3.5 bg-gradient-to-r from-violet-800 to-indigo-900 text-white flex justify-between items-center border-b border-purple-500/20">
+                <span class="font-bold text-sm flex items-center gap-2 text-purple-200"><i class="fa-solid fa-barcode text-amber-300"></i> กล้องสแกนบาร์โค้ด</span>
+                <button onclick="closeBarcodeScanner()" class="text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <div class="p-4 space-y-3 text-center">
-                <div id="barcode-reader" class="w-full rounded-xl overflow-hidden border-2 border-orange-400 bg-slate-900 min-h-[220px]"></div>
-                <p class="text-xs text-slate-500">ส่องกล้องไปที่บาร์โค้ดสินค้า ระบบจะอ่านค่าอัตโนมัติ</p>
-                <button onclick="closeBarcodeScanner()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">ยกเลิก</button>
+            <div class="p-4 space-y-3 text-center bg-slate-900">
+                <div id="barcode-reader" class="w-full rounded-2xl overflow-hidden border-2 border-purple-500/40 bg-slate-950 min-h-[220px] shadow-inner"></div>
+                <p class="text-xs text-purple-300/80">ส่องกล้องไปที่บาร์โค้ดสินค้า ระบบจะอ่านค่าให้อัตโนมัติ</p>
+                <button onclick="closeBarcodeScanner()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs border border-slate-700 transition">ยกเลิก</button>
             </div>
         </div>
     </div>
@@ -1044,6 +1051,74 @@
                 placeholder.classList.add('hidden');
             };
             reader.readAsDataURL(file);
+        }
+
+        /* AI Vision Autofill & Smart Image Search Feature */
+        async function analyzeAndAutofillProduct() {
+            const preview = document.getElementById('prod-img-preview');
+            const statusEl = document.getElementById('ai-fill-status');
+            const btn = document.getElementById('ai-autofill-btn');
+
+            if (!currentTempImg || preview.classList.contains('hidden')) {
+                alert('กรุณาเลือกรูปภาพหรือถ่ายรูปสินค้าก่อนทำการกดวิเคราะห์ครับ');
+                return;
+            }
+
+            statusEl.classList.remove('hidden');
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            try {
+                const base64Data = currentTempImg.split(',')[1];
+                const userQuery = "โปรดวิเคราะห์รูปภาพนี้แล้วระบุรายละเอียดของสินค้า โดยส่งคืนข้อมูลเฉพาะในรูปแบบ JSON format ดังนี้: {\"name\": \"ชื่อสินค้าแบบสั้นอ่านง่าย ภาษาไทย\", \"price\": 0, \"cost\": 0, \"barcode\": \"รหัสบาร์โค้ดหากมองเห็นในรูปภาพ หรือ รหัสสร้างสุ่มตัวเลข 8 หลัก\", \"clean_image_url\": \"URLรูปภาพสินค้าพื้นหลังสีขาวคมชัดสวยงามจากออนไลน์ถ้ามี หรือ null\"}";
+
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: [{
+                        role: "user",
+                        parts: [
+                            { text: userQuery },
+                            { inlineData: { mimeType: "image/jpeg", data: base64Data } }
+                        ]
+                    }],
+                    generationConfig: { responseMimeType: "application/json" }
+                };
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                const responseText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (responseText) {
+                    const data = JSON.parse(responseText);
+                    
+                    if (data.name) document.getElementById('prod-name').value = data.name;
+                    if (data.price) document.getElementById('prod-price').value = data.price;
+                    if (data.cost) document.getElementById('prod-cost').value = data.cost;
+                    if (data.barcode) document.getElementById('prod-barcode').value = data.barcode;
+                    
+                    if (data.clean_image_url) {
+                        currentTempImg = data.clean_image_url;
+                        preview.src = currentTempImg;
+                    }
+
+                    alert(`✨ AI วิเคราะห์และกรอกข้อมูลให้สำเร็จแล้ว!\nคุณสามารถตรวจสอบและแก้ไขข้อความ/ราคาเพิ่มเติมได้ตามต้องการครับ`);
+                } else {
+                    alert('AI ไม่สามารถระบุข้อมูลสินค้าจากรูปนี้ได้ กรุณากรอกข้อมูลด้วยตัวเองครับ');
+                }
+            } catch (err) {
+                alert('เกิดข้อผิดพลาดในการเชื่อมต่อ AI กรุณากรอกข้อมูลเองครับ');
+            } finally {
+                statusEl.classList.add('hidden');
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+            }
         }
 
         function saveProduct(e) {
