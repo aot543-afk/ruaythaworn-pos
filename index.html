@@ -244,6 +244,35 @@
                     </div>
                 </section>
 
+                <!-- Daily Audit & AI Restock Buttons Banner -->
+                <section class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button onclick="openDailyAuditModal()" class="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white p-3 rounded-2xl shadow-md flex items-center justify-between touch-active">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-clipboard-check"></i>
+                            </div>
+                            <div class="text-left">
+                                <div class="font-extrabold text-xs">📋 ตารางนับสต๊อก 19:30 น.</div>
+                                <div class="text-[10px] text-amber-100">สินค้าขายดี & ขายช้า วันนี้</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs opacity-70"></i>
+                    </button>
+
+                    <button onclick="getAIRestockRecommendations()" class="bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-white p-3 rounded-2xl shadow-md flex items-center justify-between touch-active">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i>
+                            </div>
+                            <div class="text-left">
+                                <div class="font-extrabold text-xs">🤖 คำแนะนำจาก AI สำหรับเติมสต๊อก</div>
+                                <div class="text-[10px] text-purple-200">วิเคราะห์คำแนะนำสั่งซื้อแต่ละล็อต</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs opacity-70"></i>
+                    </button>
+                </section>
+
                 <!-- Inventory Top Bar -->
                 <section class="flex justify-between items-center gap-2 bg-white p-3 rounded-2xl shadow-sm border border-slate-200">
                     <div class="relative flex-1">
@@ -330,6 +359,74 @@
             </div>
 
         </main>
+    </div>
+
+    <!-- DAILY STOCK AUDIT MODAL (19:30 PM FEATURE) -->
+    <div id="audit-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="px-5 py-4 text-white bg-gradient-to-r from-amber-500 to-orange-600 flex justify-between items-center">
+                <div>
+                    <h3 class="font-bold text-base flex items-center gap-2"><i class="fa-solid fa-clipboard-check"></i> ตารางนับสต๊อกประจำวัน (19:30 น.)</h3>
+                    <p class="text-[11px] text-amber-100">จัดสรรสินค้าขายดี & ขายช้า เพื่อตรวจสอบความแม่นยำ</p>
+                </div>
+                <button onclick="closeDailyAuditModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <div class="p-5 space-y-4 overflow-y-auto flex-1 text-xs">
+                <!-- Fast Movers Section -->
+                <div class="space-y-2">
+                    <h4 class="font-bold text-amber-700 flex items-center gap-1.5 text-xs uppercase tracking-wider">
+                        <i class="fa-solid fa-fire text-rose-500"></i> 🔥 สินค้าขายดี (ต้องนับบ่อย ป้องกันสูญหาย)
+                    </h4>
+                    <div id="audit-fast-movers-list" class="space-y-1.5">
+                        <!-- Items dynamically inserted -->
+                    </div>
+                </div>
+
+                <!-- Slow Movers Section -->
+                <div class="space-y-2 pt-2 border-t border-slate-100">
+                    <h4 class="font-bold text-indigo-700 flex items-center gap-1.5 text-xs uppercase tracking-wider">
+                        <i class="fa-solid fa-hourglass-half text-indigo-500"></i> 💤 สินค้านานๆ ขายที (นับสุ่ม เช็กสินค้าตกค้าง)
+                    </h4>
+                    <div id="audit-slow-movers-list" class="space-y-1.5">
+                        <!-- Items dynamically inserted -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 border-t border-slate-200 text-right">
+                <button onclick="closeDailyAuditModal()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs touch-active">
+                    เช็กเรียบร้อย
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI RESTOCK RECOMMENDATIONS MODAL -->
+    <div id="ai-restock-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[85vh]">
+            <div class="px-5 py-4 text-white bg-gradient-to-r from-purple-600 to-indigo-700 flex justify-between items-center">
+                <h3 class="font-bold text-base flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> AI คำแนะนำสั่งซื้อสินค้าประจำล็อต</h3>
+                <button onclick="closeAIRestockModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            
+            <div class="p-5 space-y-3 overflow-y-auto flex-1 text-xs">
+                <div id="ai-restock-loading" class="text-center py-8 space-y-2">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-purple-600 border-t-transparent"></div>
+                    <p class="font-bold text-purple-700">AI กำลังประมวลผลยอดขายและคำนวณการสั่งซื้อล็อตถัดไป...</p>
+                </div>
+
+                <div id="ai-restock-content" class="hidden space-y-3 leading-relaxed text-slate-700">
+                    <!-- AI analysis content dynamically inserted -->
+                </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 border-t border-slate-200">
+                <button onclick="closeAIRestockModal()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs touch-active">
+                    รับทราบคำแนะนำ
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- PRODUCT ADD/EDIT MODAL -->
@@ -554,6 +651,7 @@
         let activeScannerMode = null; // 'pos' or 'form'
         let currentTempImg = '';
         let accFilter = 'today';
+        let lastAuditNotificationDate = '';
 
         const categories = {
             income: ['ขายสินค้าหน้าร้าน (POS)', 'ขายออนไลน์', 'รายได้อื่นๆ'],
@@ -586,6 +684,9 @@
                 initAppSync();
             }
             document.getElementById('acc-date').valueAsDate = new Date();
+
+            // Setup 19:30 PM Alarm Check Timer
+            setInterval(checkDaily1930AuditTimer, 30000); // Check every 30 seconds
         };
 
         function initAppSync() {
@@ -612,6 +713,163 @@
 
         function getTodayString() {
             return new Date().toISOString().split('T')[0];
+        }
+
+        /* ⏰ 19:30 PM DAILY AUDIT TIMER TRIGGER */
+        function checkDaily1930AuditTimer() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const todayStr = getTodayString();
+
+            // Check if current time is around 19:30 and hasn't notified today
+            if (hours === 19 && minutes >= 30 && minutes <= 59) {
+                if (lastAuditNotificationDate !== todayStr) {
+                    lastAuditNotificationDate = todayStr;
+                    openDailyAuditModal();
+                    alert('⏰ ได้เวลา 19:30 น. แล้วครับ! ระบบได้จัดสรรรายการนับสต๊อกสินค้าประจำวันให้แล้วเรียบร้อยครับ');
+                }
+            }
+        }
+
+        function openDailyAuditModal() {
+            const fastList = document.getElementById('audit-fast-movers-list');
+            const slowList = document.getElementById('audit-slow-movers-list');
+            fastList.innerHTML = '';
+            slowList.innerHTML = '';
+
+            const pKeys = Object.keys(products);
+            if (pKeys.length === 0) {
+                fastList.innerHTML = '<div class="text-slate-400 py-2">ยังไม่มีสินค้าในระบบ</div>';
+                slowList.innerHTML = '<div class="text-slate-400 py-2">ยังไม่มีสินค้าในระบบ</div>';
+                document.getElementById('audit-modal').classList.remove('hidden');
+                return;
+            }
+
+            // Calculate sales count per product
+            const salesCount = {};
+            Object.keys(transactions).forEach(txId => {
+                const tx = transactions[txId];
+                if (tx.note && tx.type === 'income') {
+                    pKeys.forEach(pk => {
+                        const pname = products[pk].name;
+                        if (tx.note.includes(pname)) {
+                            salesCount[pk] = (salesCount[pk] || 0) + 1;
+                        }
+                    });
+                }
+            });
+
+            // Sort Products into Fast Movers vs Slow Movers
+            const sortedBySales = [...pKeys].sort((a, b) => (salesCount[b] || 0) - (salesCount[a] || 0));
+            const fastMovers = sortedBySales.slice(0, Math.min(5, sortedBySales.length));
+            const slowMovers = sortedBySales.slice(Math.max(0, sortedBySales.length - 5)).reverse();
+
+            fastMovers.forEach(pk => {
+                const p = products[pk];
+                const q = parseInt(p.qty || p.stock || 0);
+                const div = document.createElement('div');
+                div.className = "p-2.5 bg-amber-50 rounded-xl border border-amber-200 flex justify-between items-center";
+                div.innerHTML = `
+                    <div>
+                        <div class="font-bold text-slate-800">${p.name}</div>
+                        <div class="text-[10px] text-amber-700">ขายบ่อย • ในระบบมี: ${q} ชิ้น</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="number" placeholder="นับได้..." onchange="updateDirectStock('${pk}', this.value)" class="w-16 p-1 bg-white border border-amber-300 rounded-lg text-center font-bold text-slate-800">
+                    </div>
+                `;
+                fastList.appendChild(div);
+            });
+
+            slowMovers.forEach(pk => {
+                const p = products[pk];
+                const q = parseInt(p.qty || p.stock || 0);
+                const div = document.createElement('div');
+                div.className = "p-2.5 bg-indigo-50 rounded-xl border border-indigo-200 flex justify-between items-center";
+                div.innerHTML = `
+                    <div>
+                        <div class="font-bold text-slate-800">${p.name}</div>
+                        <div class="text-[10px] text-indigo-700">ขายช้า/นานๆขายที • ในระบบมี: ${q} ชิ้น</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="number" placeholder="นับได้..." onchange="updateDirectStock('${pk}', this.value)" class="w-16 p-1 bg-white border border-indigo-300 rounded-lg text-center font-bold text-slate-800">
+                    </div>
+                `;
+                slowList.appendChild(div);
+            });
+
+            document.getElementById('audit-modal').classList.remove('hidden');
+        }
+
+        function closeDailyAuditModal() {
+            document.getElementById('audit-modal').classList.add('hidden');
+        }
+
+        function updateDirectStock(prodId, val) {
+            const count = parseInt(val);
+            if (isNaN(count) || count < 0) return;
+
+            db.ref(`products/${prodId}/qty`).set(count);
+            db.ref(`products/${prodId}/stock`).set(count);
+            alert(`อัปเดตสต๊อกสินค้าเป็น ${count} ชิ้น เรียบร้อยครับ`);
+        }
+
+        /* 🤖 AI RESTOCK RECOMMENDATIONS FEATURE */
+        async function getAIRestockRecommendations() {
+            const modal = document.getElementById('ai-restock-modal');
+            const loading = document.getElementById('ai-restock-loading');
+            const content = document.getElementById('ai-restock-content');
+
+            modal.classList.remove('hidden');
+            loading.classList.remove('hidden');
+            content.classList.add('hidden');
+
+            try {
+                const pList = Object.keys(products).map(k => {
+                    const p = products[k];
+                    return `- ${p.name}: เหลือ ${p.qty || p.stock || 0} ชิ้น (ราคาขาย ${p.price} บ., ต้นทุน ${p.cost || 0} บ.)`;
+                }).join('\n');
+
+                const prompt = `คุณคือผู้เชี่ยวชาญการบริหารคลังสินค้า ร้านค้าปลีก "ร้านรวยถาวร"
+จากรายการสต๊อกสินค้าปัจจุบันดังนี้:
+${pList}
+
+โปรดวิเคราะห์และให้คำแนะนำสั้นๆ กระชับ ได้ใจความ สำหรับการเติมสต๊อกสินค้าล็อตถัดไป:
+1. สินค้าที่ต้องสั่งซื้อเพิ่มด่วน (เนื่องจากใกล้หมด)
+2. สินค้าที่ควรชะลอการสั่งซื้อ (เนื่องจากขายช้าหรือยังมีคงเหลือเยอะ)
+3. ข้อเสนอแนะเพิ่มเติมสั้นๆ 1 ข้อ`;
+
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ role: 'user', parts: [{ text: prompt }] }]
+                    })
+                });
+
+                const result = await response.json();
+                const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                loading.classList.add('hidden');
+                if (text) {
+                    content.innerHTML = text.replace(/\n/g, '<br>');
+                    content.classList.remove('hidden');
+                } else {
+                    content.innerHTML = '<p class="text-rose-500">ไม่สามารถดึงคำแนะนำได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง</p>';
+                    content.classList.remove('hidden');
+                }
+            } catch (err) {
+                loading.classList.add('hidden');
+                content.innerHTML = '<p class="text-rose-500">เกิดข้อผิดพลาดในการเชื่อมต่อกับระบบ AI</p>';
+                content.classList.remove('hidden');
+            }
+        }
+
+        function closeAIRestockModal() {
+            document.getElementById('ai-restock-modal').classList.add('hidden');
         }
 
         function switchTab(tab) {
