@@ -609,7 +609,7 @@
         </div>
     </div>
 
-    <!-- AI VISUAL RECOGNITION SEARCH MODAL (UPGRADED) -->
+    <!-- AI VISUAL RECOGNITION SEARCH MODAL (ROBUST) -->
     <div id="ai-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl">
             <div class="px-4 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex justify-between items-center">
@@ -1481,7 +1481,7 @@
         }
 
         /* 📸 COMPRESS IMAGE FOR BETTER AI ACCURACY */
-        function compressAndResizeImage(file, maxWidth = 800, quality = 0.8) {
+        function compressAndResizeImage(file, maxWidth = 1000, quality = 0.85) {
             return new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
@@ -1520,7 +1520,7 @@
             placeholder.classList.add('hidden');
         }
 
-        /* ✨ ENHANCED AI VISION AUTOFILL FEATURE */
+        /* ✨ HIGHLY ROBUST AI AUTOFILL (PREVENT FAILURES) */
         async function analyzeAndAutofillProduct() {
             const preview = document.getElementById('prod-img-preview');
             const statusEl = document.getElementById('ai-fill-status');
@@ -1537,15 +1537,7 @@
 
             try {
                 const base64Data = currentTempImg.split(',')[1];
-                const promptText = `วิเคราะห์รูปภาพสินค้านี้สำหรับร้านขายของชำและส่งคืนข้อมูลในรูปแบบ JSON:
-{
-  "name": "ชื่อสินค้าภาษาไทยแบบสั้น เช่น ซอสฝาเขียว ตราภูเขาทอง",
-  "category": "drinks|snacks|household|seasoning|others",
-  "unit": "ชิ้น|ลัง|แพ็ก|ขวด|ถุง|กล่อง",
-  "price": ราคาขายประมาณการเป็นตัวเลข,
-  "cost": ราคาต้นทุนประมาณการเป็นตัวเลข,
-  "barcode": "รหัสบาร์โค้ด 8-13 หลัก (ถ้าเห็นในรูป)"
-}`;
+                const promptText = "บอกชื่อสินค้าภาษาไทย ยี่ห้อ และขนาดของสินค้าในรูปให้สั้นและชัดเจนที่สุด เช่น 'น้ำปลาทิพรส 700ml'";
 
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
@@ -1556,8 +1548,7 @@
                             { text: promptText },
                             { inlineData: { mimeType: "image/jpeg", data: base64Data } }
                         ]
-                    }],
-                    generationConfig: { responseMimeType: "application/json" }
+                    }]
                 };
 
                 const response = await fetch(apiUrl, {
@@ -1570,21 +1561,27 @@
                 const responseText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
 
                 if (responseText) {
-                    const cleanJsonStr = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
-                    const data = JSON.parse(cleanJsonStr);
-
-                    if (data.name) document.getElementById('prod-name').value = data.name;
-                    if (data.category) document.getElementById('prod-category').value = data.category;
-                    if (data.unit) document.getElementById('prod-unit').value = data.unit;
-                    if (data.price) document.getElementById('prod-price').value = data.price;
-                    if (data.cost) document.getElementById('prod-cost').value = data.cost;
-                    if (data.barcode) document.getElementById('prod-barcode').value = data.barcode;
-                    alert('✨ Smart AI วิเคราะห์และกรอกข้อมูลสินค้าเรียบร้อยแล้วครับ');
+                    const cleanName = responseText.replace(/\n/g, ' ').replace(/[#*]/g, '').trim();
+                    document.getElementById('prod-name').value = cleanName;
+                    
+                    // Auto select category based on name keywords
+                    if (cleanName.includes('น้ำ') || cleanName.includes('เป๊ปซี่') || cleanName.includes('โค้ก') || cleanName.includes('ชา')) {
+                        document.getElementById('prod-category').value = 'drinks';
+                        document.getElementById('prod-unit').value = 'ขวด';
+                    } else if (cleanName.includes('ซอส') || cleanName.includes('ซีอิ๊ว') || cleanName.includes('น้ำปลา') || cleanName.includes('รสดี')) {
+                        document.getElementById('prod-category').value = 'seasoning';
+                        document.getElementById('prod-unit').value = 'ขวด';
+                    } else if (cleanName.includes('ขนม') || cleanName.includes('เลย์') || cleanName.includes('มาม่า')) {
+                        document.getElementById('prod-category').value = 'snacks';
+                        document.getElementById('prod-unit').value = 'ถุง';
+                    }
+                    
+                    alert(`✨ Smart AI อ่านพบสินค้า: "${cleanName}" เรียบร้อยครับ`);
                 } else {
-                    alert('ไม่สามารถอ่านข้อมูลสินค้าได้ กรุณากรอกข้อมูลเพิ่มเติมครับ');
+                    alert('ไม่สามารถอ่านข้อมูลสินค้าได้ กรุณากรอกชื่อสินค้าเพิ่มเติมครับ');
                 }
             } catch (err) {
-                alert('วิเคราะห์เสร็จเรียบร้อย กรุณาตรวจสอบและกรอกราคาเพิ่มเติมครับ');
+                alert('การประมวลผลขัดข้อง กรุณาพิมพ์ชื่อสินค้าเองครับ');
             } finally {
                 statusEl.classList.add('hidden');
                 btn.disabled = false;
@@ -1704,10 +1701,7 @@
 ส่งคืนผลลัพธ์เป็น JSON ในรูปแบบนี้เท่านั้น:
 {
   "matched_id": "IDสินค้าที่ตรงกันที่สุด (ถ้าไม่แน่ใจหรือไม่มีให้ใส่ null)",
-  "detected_product_name": "ชื่อสินค้าภาษาไทยที่ AI ระบุได้จากรูป",
-  "category": "drinks|snacks|household|seasoning|others",
-  "unit": "ชิ้น|ขวด|ถุง|แพ็ก|ลัง|กล่อง",
-  "suggested_price": ราคาขายประมาณการ
+  "detected_product_name": "ชื่อสินค้าภาษาไทยที่ AI ระบุได้จากรูป"
 }`;
 
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
@@ -1761,9 +1755,6 @@
                             closeAISearchModal();
                             openProductModal();
                             document.getElementById('prod-name').value = guessedName;
-                            if (parsed.category) document.getElementById('prod-category').value = parsed.category;
-                            if (parsed.unit) document.getElementById('prod-unit').value = parsed.unit;
-                            if (parsed.suggested_price) document.getElementById('prod-price').value = parsed.suggested_price;
                             
                             const prodPreview = document.getElementById('prod-img-preview');
                             const prodPlaceholder = document.getElementById('prod-img-placeholder');
