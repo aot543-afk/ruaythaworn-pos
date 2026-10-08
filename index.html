@@ -100,11 +100,78 @@
 
     <!-- App Container -->
     <div id="app-container" class="hidden">
-        <!-- Header With Brand Logo -->
+        
+        <!-- SIDEBAR DRAWER (สไตล์ Gemini / Dark Theme) -->
+        <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden transition-opacity"></div>
+        <aside id="sidebar-drawer" class="fixed top-0 left-0 bottom-0 w-72 bg-slate-900 text-slate-100 z-50 -translate-x-full transition-transform duration-300 flex flex-col justify-between shadow-2xl border-r border-slate-800">
+            <div class="p-4 space-y-6 overflow-y-auto">
+                <!-- Header Drawer -->
+                <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+                    <div class="flex items-center gap-2.5">
+                        <img src="./logo.png" onerror="this.src='https://raw.githubusercontent.com/aot543-afk/ruaythaworn-pos/main/logo.png'" class="w-9 h-9 rounded-full object-cover border border-amber-400">
+                        <div>
+                            <h2 class="font-bold text-sm text-white">ร้านรวยถาวร</h2>
+                            <p class="text-[10px] text-purple-300">POS & Cloud Assistant</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleSidebar()" class="text-slate-400 hover:text-white p-1.5"><i class="fa-solid fa-xmark text-lg"></i></button>
+                </div>
+
+                <!-- Navigation Section -->
+                <div class="space-y-1 text-xs">
+                    <div class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">หมวดหมู่สินค้า</div>
+                    <button onclick="selectCategorySidebar('all')" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-800 font-medium flex items-center gap-2.5 transition text-slate-200">
+                        <i class="fa-solid fa-globe text-purple-400 w-5"></i> ทั้งหมด (All)
+                    </button>
+                    <button onclick="selectCategorySidebar('drinks')" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-800 font-medium flex items-center gap-2.5 transition text-slate-200">
+                        <i class="fa-solid fa-wine-bottle text-blue-400 w-5"></i> เครื่องดื่ม & น้ำ
+                    </button>
+                    <button onclick="selectCategorySidebar('snacks')" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-800 font-medium flex items-center gap-2.5 transition text-slate-200">
+                        <i class="fa-solid fa-cookie-bite text-amber-400 w-5"></i> ขนม & ของกิน
+                    </button>
+                    <button onclick="selectCategorySidebar('household')" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-800 font-medium flex items-center gap-2.5 transition text-slate-200">
+                        <i class="fa-solid fa-broom text-emerald-400 w-5"></i> ของใช้ & อุปกรณ์
+                    </button>
+                    <button onclick="selectCategorySidebar('seasoning')" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-800 font-medium flex items-center gap-2.5 transition text-slate-200">
+                        <i class="fa-solid fa-bottle-droplet text-rose-400 w-5"></i> เครื่องปรุง & ซอส
+                    </button>
+                    <button onclick="selectCategorySidebar('others')" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-800 font-medium flex items-center gap-2.5 transition text-slate-200">
+                        <i class="fa-solid fa-box text-slate-400 w-5"></i> อื่นๆ
+                    </button>
+                </div>
+
+                <div class="space-y-1 text-xs pt-3 border-t border-slate-800">
+                    <div class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">เมนูลัดระบบ</div>
+                    <button onclick="toggleSidebar(); openDailyAuditModal();" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-800 font-medium flex items-center gap-2.5 transition text-amber-300">
+                        <i class="fa-solid fa-clipboard-check w-5"></i> ตารางนับสต๊อก 19:30 น.
+                    </button>
+                    <button onclick="toggleSidebar(); generatePurchaseOrderPDF();" class="w-full text-left px-3 py-2.5 rounded-xl hover:bg-slate-800 font-medium flex items-center gap-2.5 transition text-purple-300">
+                        <i class="fa-solid fa-file-invoice w-5"></i> ออกใบสั่งซื้อสินค้า (PO)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Profile Bottom Bar -->
+            <div class="p-3 border-t border-slate-800 bg-slate-950/50 flex items-center justify-between text-xs">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center font-bold text-white text-[10px]">WP</div>
+                    <div class="truncate">
+                        <div class="font-bold text-slate-200 truncate">Wirat Pachjamnong</div>
+                        <div class="text-[9px] text-slate-500">เจ้าของร้าน / ผู้ดูแล</div>
+                    </div>
+                </div>
+                <button onclick="logout()" title="ออกจากระบบ" class="text-rose-400 hover:text-rose-300 p-1.5"><i class="fa-solid fa-right-from-bracket"></i></button>
+            </div>
+        </aside>
+
+        <!-- Header With Brand Logo & Sidebar Toggle -->
         <header class="bg-gradient-to-r from-violet-700 via-purple-700 to-indigo-800 text-white shadow-lg sticky top-0 z-30">
             <div class="max-w-md md:max-w-5xl mx-auto px-4 py-2.5 flex justify-between items-center">
                 <div class="flex items-center space-x-3">
-                    <div class="w-11 h-11 rounded-full p-0.5 bg-gradient-to-tr from-amber-300 to-yellow-500 shadow-md shrink-0">
+                    <button onclick="toggleSidebar()" class="p-2 hover:bg-white/10 rounded-xl transition text-white">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                    <div class="w-10 h-10 rounded-full p-0.5 bg-gradient-to-tr from-amber-300 to-yellow-500 shadow-md shrink-0">
                         <img src="./logo.png" id="logo-header" onerror="this.src='https://raw.githubusercontent.com/aot543-afk/ruaythaworn-pos/main/logo.png'" class="w-full h-full object-cover rounded-full">
                     </div>
                     <div>
@@ -163,31 +230,14 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                    <!-- Left: Product Grid & Category Drawer -->
+                    <!-- Left: Product Grid -->
                     <div class="md:col-span-7 space-y-3">
-                        <div class="bg-white p-2 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-2">
-                            <button onclick="toggleCategoryMenu()" class="p-2.5 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-xl transition font-bold text-sm shrink-0 flex items-center gap-1">
-                                <i class="fa-solid fa-bars text-base"></i>
-                                <span class="text-xs font-bold hidden sm:inline" id="selected-cat-label">ทั้งหมด</span>
-                            </button>
-
-                            <div class="flex-1 flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
+                        <div class="bg-white p-2.5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-2">
+                            <div class="flex-1 flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-100">
                                 <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs"></i>
                                 <input type="text" id="pos-search" oninput="renderPosGrid()" placeholder="พิมพ์ชื่อสินค้า หรือ รหัสบาร์โค้ด..." class="w-full text-xs md:text-sm bg-transparent focus:outline-none">
                             </div>
-                        </div>
-
-                        <!-- Category Drawer -->
-                        <div id="category-drawer" class="bg-white p-3 rounded-2xl border border-purple-100 shadow-sm hidden space-y-2">
-                            <span class="text-[11px] font-bold text-purple-800 uppercase tracking-wider block"><i class="fa-solid fa-list text-purple-600"></i> เลือกหมวดหมู่สินค้า:</span>
-                            <div class="flex flex-wrap gap-1.5" id="cat-button-group">
-                                <button onclick="selectCategory('all')" class="cat-btn bg-purple-600 text-white text-xs px-3 py-1.5 rounded-xl font-bold shadow-sm">🌐 ทั้งหมด (All)</button>
-                                <button onclick="selectCategory('drinks')" class="cat-btn bg-slate-100 text-slate-600 text-xs px-3 py-1.5 rounded-xl font-bold hover:bg-purple-100">🥤 เครื่องดื่ม & น้ำ</button>
-                                <button onclick="selectCategory('snacks')" class="cat-btn bg-slate-100 text-slate-600 text-xs px-3 py-1.5 rounded-xl font-bold hover:bg-purple-100">🍿 ขนม & ของกิน</button>
-                                <button onclick="selectCategory('household')" class="cat-btn bg-slate-100 text-slate-600 text-xs px-3 py-1.5 rounded-xl font-bold hover:bg-purple-100">🧹 ของใช้ & อุปกรณ์</button>
-                                <button onclick="selectCategory('seasoning')" class="cat-btn bg-slate-100 text-slate-600 text-xs px-3 py-1.5 rounded-xl font-bold hover:bg-purple-100">🧴 เครื่องปรุง & ซอส</button>
-                                <button onclick="selectCategory('others')" class="cat-btn bg-slate-100 text-slate-600 text-xs px-3 py-1.5 rounded-xl font-bold hover:bg-purple-100">📦 อื่นๆ</button>
-                            </div>
+                            <span id="pos-cat-badge" class="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-2 rounded-xl shrink-0">ทั้งหมด</span>
                         </div>
 
                         <div id="pos-product-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 max-h-[520px] overflow-y-auto pr-1"></div>
@@ -501,7 +551,7 @@
         </div>
     </div>
 
-    <!-- PRODUCT ADD/EDIT MODAL -->
+    <!-- PRODUCT ADD/EDIT MODAL (พร้อมปุ่มเลือกรูป 2 ปุ่มชัดเจน) -->
     <div id="product-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden p-0 sm:p-4">
         <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-xl overflow-hidden max-h-[90vh] flex flex-col">
             <div class="px-5 py-4 text-white flex justify-between items-center bg-gradient-to-r from-purple-600 to-indigo-600">
@@ -516,20 +566,27 @@
                         <img id="prod-img-preview" src="" class="w-full h-full object-cover hidden">
                         <div id="prod-img-placeholder" class="text-center text-slate-400 p-2">
                             <i class="fa-solid fa-camera text-2xl mb-1 text-purple-400"></i>
-                            <span class="block text-[10px] font-semibold text-slate-500">ถ่ายรูป/เลือกรูป</span>
+                            <span class="block text-[10px] font-semibold text-slate-500">เลือก/ถ่ายรูปสินค้า</span>
                         </div>
-                        <input type="file" id="prod-img-input" accept="image/*" capture="environment" onchange="handleImageUpload(event)" class="absolute inset-0 opacity-0 cursor-pointer">
                     </div>
                     
-                    <div class="flex gap-2 w-full">
-                        <button type="button" onclick="document.getElementById('prod-img-input').click()" class="flex-1 py-2 bg-white border border-purple-200 rounded-xl font-bold text-purple-700 shadow-sm hover:bg-purple-100 transition flex items-center justify-center gap-1 text-[11px]">
-                            <i class="fa-solid fa-upload"></i> เลือกรูป
+                    <!-- INPUTS แบบซ่อนสำหรับ JS สั่งคลิก -->
+                    <input type="file" id="prod-file-gallery" accept="image/*" onchange="handleImageFileSelected(event)" class="hidden">
+                    <input type="file" id="prod-file-camera" accept="image/*" capture="environment" onchange="handleImageFileSelected(event)" class="hidden">
+
+                    <div class="grid grid-cols-2 gap-2 w-full">
+                        <button type="button" onclick="document.getElementById('prod-file-gallery').click()" class="py-2 bg-white border border-purple-200 rounded-xl font-bold text-purple-700 shadow-sm hover:bg-purple-100 transition flex items-center justify-center gap-1 text-[11px]">
+                            <i class="fa-solid fa-image text-purple-500"></i> คลังภาพ
                         </button>
-                        <button type="button" onclick="analyzeAndAutofillProduct()" id="ai-autofill-btn" class="flex-1 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-bold shadow-md hover:from-purple-700 hover:to-indigo-700 transition flex items-center justify-center gap-1 text-[11px] touch-active">
-                            <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> ✨ AI กรอกข้อมูล
+                        <button type="button" onclick="document.getElementById('prod-file-camera').click()" class="py-2 bg-white border border-purple-200 rounded-xl font-bold text-purple-700 shadow-sm hover:bg-purple-100 transition flex items-center justify-center gap-1 text-[11px]">
+                            <i class="fa-solid fa-camera text-indigo-500"></i> กล้องถ่ายรูป
                         </button>
                     </div>
-                    <span id="ai-fill-status" class="text-[10px] font-semibold text-purple-600 hidden animate-pulse">กำลังใช้ Smart AI วิเคราะห์สินค้า...</span>
+
+                    <button type="button" onclick="analyzeAndAutofillProduct()" id="ai-autofill-btn" class="w-full py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-bold shadow-md hover:from-purple-700 hover:to-indigo-700 transition flex items-center justify-center gap-1 text-[11px] touch-active">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-300"></i> ✨ AI วิเคราะห์อ่านรูปภาพ
+                    </button>
+                    <span id="ai-fill-status" class="text-[10px] font-semibold text-purple-600 hidden animate-pulse">Smart AI กำลังอ่านฉลากสินค้า...</span>
                 </div>
 
                 <div>
@@ -609,7 +666,7 @@
         </div>
     </div>
 
-    <!-- AI VISUAL RECOGNITION SEARCH MODAL (ROBUST) -->
+    <!-- AI VISUAL RECOGNITION SEARCH MODAL (2 ปุ่มเลือกรูปสแกนขาย) -->
     <div id="ai-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white w-full max-w-sm rounded-3xl overflow-hidden shadow-2xl">
             <div class="px-4 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white flex justify-between items-center">
@@ -623,19 +680,31 @@
                         <i class="fa-solid fa-camera-retro text-3xl text-purple-400"></i>
                         <p class="text-xs font-semibold text-slate-600">ถ่ายรูปสินค้าหน้าร้านเพื่อสแกนขาย</p>
                     </div>
-                    <input type="file" id="ai-camera-input" accept="image/*" capture="environment" onchange="processAISearch(event)" class="absolute inset-0 opacity-0 cursor-pointer">
+                </div>
+
+                <!-- Input แบบซ่อนสำหรับสแกนขาย -->
+                <input type="file" id="ai-input-gallery" accept="image/*" onchange="processAISearch(event)" class="hidden">
+                <input type="file" id="ai-input-camera" accept="image/*" capture="environment" onchange="processAISearch(event)" class="hidden">
+
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="document.getElementById('ai-input-gallery').click()" class="py-2.5 bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition">
+                        <i class="fa-solid fa-image text-purple-600"></i> เลือกจากคลังภาพ
+                    </button>
+                    <button type="button" onclick="document.getElementById('ai-input-camera').click()" class="py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl text-xs shadow flex items-center justify-center gap-1.5 touch-active">
+                        <i class="fa-solid fa-camera text-amber-300"></i> ถ่ายรูป (กล้องหลัง)
+                    </button>
                 </div>
 
                 <div id="ai-status-container" class="hidden py-3">
                     <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-purple-500 border-t-transparent"></div>
-                    <p class="text-xs font-bold text-purple-600 mt-2">Smart AI กำลังสแกนตรวจสอบฉลากสินค้า...</p>
+                    <p class="text-xs font-bold text-purple-600 mt-2">Smart AI กำลังเทียบรูปภาพกับคลังสินค้าในร้าน...</p>
                 </div>
 
                 <!-- Found Match Card -->
                 <div id="ai-result-card" class="hidden text-left bg-purple-50 p-3.5 rounded-2xl border border-purple-200 space-y-2">
                     <div class="flex justify-between items-start">
                         <div>
-                            <span class="text-[9px] font-bold bg-purple-600 text-white px-2 py-0.5 rounded-full uppercase">พบสินค้าตรงกัน</span>
+                            <span class="text-[9px] font-bold bg-purple-600 text-white px-2 py-0.5 rounded-full uppercase">พบสินค้าตรงกันในระบบ</span>
                             <h4 id="ai-found-name" class="font-bold text-slate-800 text-sm mt-1">ชื่อสินค้า</h4>
                         </div>
                         <span id="ai-found-price" class="text-base font-extrabold text-emerald-600">฿0</span>
@@ -652,16 +721,12 @@
                 <!-- Not In System Card -->
                 <div id="ai-notfound-card" class="hidden text-left bg-amber-50 p-3.5 rounded-2xl border border-amber-200 space-y-2">
                     <span class="text-[9px] font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full uppercase">ยังไม่มีในสต๊อกเดิม</span>
-                    <h4 id="ai-guessed-name" class="font-bold text-slate-800 text-xs">AI ตรวจพบ: -</h4>
-                    <p class="text-[11px] text-amber-800">สินค้านี้ยังไม่มีในระบบสต๊อก คุณสามารถกดปุ่มเพื่อเพิ่มรายการใหม่ได้ทันที</p>
+                    <h4 id="ai-guessed-name" class="font-bold text-slate-800 text-xs">AI อ่านได้: -</h4>
+                    <p class="text-[11px] text-amber-800">สินค้านี้ยังไม่มีในคลัง สามารถกดเพื่อสร้างเป็นรายการใหม่ได้ทันที</p>
                     <button id="ai-add-new-prod-btn" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs touch-active shadow-md">
                         ✨ + เพิ่มเป็นสินค้าใหม่ลงในระบบ
                     </button>
                 </div>
-
-                <button type="button" onclick="document.getElementById('ai-camera-input').click()" class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl text-xs shadow-md touch-active">
-                    📷 เปิดกล้องถ่ายรูปสินค้า
-                </button>
             </div>
         </div>
     </div>
@@ -741,7 +806,9 @@
 
     <script>
         // Global Gemini API Key
-        const GEMINI_API_KEY = "AQ.Ab8RN6J5LKtHAkG_McunGI4HkBhBaCYICI8YCq6ukDXzvwSnHQ";
+        // Gemini API key: paste your NEW key here locally before testing.
+        // Do not publish this HTML with the key embedded. For production, move Gemini calls to a backend/Cloud Function.
+        const GEMINI_API_KEY = "AQ.Ab8RN6LWsnKbk6f8o3NY4YAs6-Q77MVcX7jJxUFdaxRa-ZzEmw";
 
         // Firebase Configuration
         const firebaseConfig = {
@@ -775,6 +842,26 @@
             seasoning: '🧴 เครื่องปรุง & ซอส',
             others: '📦 อื่นๆ'
         };
+
+        // Sidebar Toggle
+        function toggleSidebar() {
+            const drawer = document.getElementById('sidebar-drawer');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (drawer.classList.contains('-translate-x-full')) {
+                drawer.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                drawer.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function selectCategorySidebar(catKey) {
+            selectedCategory = catKey;
+            document.getElementById('pos-cat-badge').innerText = catNames[catKey] || 'ทั้งหมด';
+            toggleSidebar();
+            renderPosGrid();
+        }
 
         // Login System
         function attemptLogin() {
@@ -843,24 +930,6 @@
 
         function getTodayString() {
             return new Date().toISOString().split('T')[0];
-        }
-
-        function toggleCategoryMenu() {
-            const drawer = document.getElementById('category-drawer');
-            drawer.classList.toggle('hidden');
-        }
-
-        function selectCategory(catKey) {
-            selectedCategory = catKey;
-            document.getElementById('selected-cat-label').innerText = catNames[catKey] || 'ทั้งหมด';
-            
-            const btns = document.querySelectorAll('#cat-button-group button');
-            btns.forEach(btn => {
-                btn.className = "cat-btn bg-slate-100 text-slate-600 text-xs px-3 py-1.5 rounded-xl font-bold hover:bg-purple-100";
-            });
-            event.target.className = "cat-btn bg-purple-600 text-white text-xs px-3 py-1.5 rounded-xl font-bold shadow-sm";
-
-            renderPosGrid();
         }
 
         /* ⏰ 19:30 PM DAILY AUDIT TIMER TRIGGER */
@@ -1508,7 +1577,7 @@
             });
         }
 
-        async function handleImageUpload(e) {
+        async function handleImageFileSelected(e) {
             const file = e.target.files[0];
             if (!file) return;
 
@@ -1520,14 +1589,14 @@
             placeholder.classList.add('hidden');
         }
 
-        /* ✨ HIGHLY ROBUST AI AUTOFILL (PREVENT FAILURES) */
+        /* ✨ CONTEXT-AWARE AI AUTOFILL FOR ADD PRODUCT */
         async function analyzeAndAutofillProduct() {
             const preview = document.getElementById('prod-img-preview');
             const statusEl = document.getElementById('ai-fill-status');
             const btn = document.getElementById('ai-autofill-btn');
 
             if (!currentTempImg || preview.classList.contains('hidden')) {
-                alert('กรุณาเลือกรูปภาพหรือถ่ายรูปสินค้าก่อนทำการกดวิเคราะห์ครับ');
+                alert('กรุณาเลือกรูปภาพหรือถ่ายรูปสินค้าก่อนกดวิเคราะห์ครับ');
                 return;
             }
 
@@ -1537,9 +1606,9 @@
 
             try {
                 const base64Data = currentTempImg.split(',')[1];
-                const promptText = "บอกชื่อสินค้าภาษาไทย ยี่ห้อ และขนาดของสินค้าในรูปให้สั้นและชัดเจนที่สุด เช่น 'น้ำปลาทิพรส 700ml'";
+                const promptText = "อ่านข้อความและฉลากสินค้าภาษาไทยในรูปภาพ แล้วระบุชื่อสินค้า ยี่ห้อ และขนาดให้ชัดเจน เช่น 'น้ำปลาทิพรส 700ml'";
 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`;
 
                 const payload = {
                     contents: [{
@@ -1553,18 +1622,24 @@
 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-goog-api-key': GEMINI_API_KEY
+                    },
                     body: JSON.stringify(payload)
                 });
 
                 const result = await response.json();
+                if (!response.ok) {
+                    console.error('Gemini API Error:', result);
+                    throw new Error(result?.error?.message || `Gemini API Error ${response.status}`);
+                }
                 const responseText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
 
                 if (responseText) {
                     const cleanName = responseText.replace(/\n/g, ' ').replace(/[#*]/g, '').trim();
                     document.getElementById('prod-name').value = cleanName;
                     
-                    // Auto select category based on name keywords
                     if (cleanName.includes('น้ำ') || cleanName.includes('เป๊ปซี่') || cleanName.includes('โค้ก') || cleanName.includes('ชา')) {
                         document.getElementById('prod-category').value = 'drinks';
                         document.getElementById('prod-unit').value = 'ขวด';
@@ -1575,13 +1650,13 @@
                         document.getElementById('prod-category').value = 'snacks';
                         document.getElementById('prod-unit').value = 'ถุง';
                     }
-                    
-                    alert(`✨ Smart AI อ่านพบสินค้า: "${cleanName}" เรียบร้อยครับ`);
+                    alert(`✨ AI อ่านชื่อสินค้าได้ว่า: "${cleanName}"`);
                 } else {
-                    alert('ไม่สามารถอ่านข้อมูลสินค้าได้ กรุณากรอกชื่อสินค้าเพิ่มเติมครับ');
+                    alert('ไม่สามารถอ่านข้อมูลในรูปได้ กรุณากรอกชื่อสินค้าเพิ่มเติมครับ');
                 }
             } catch (err) {
-                alert('การประมวลผลขัดข้อง กรุณาพิมพ์ชื่อสินค้าเองครับ');
+                console.error('Gemini add-product error:', err);
+                alert(`AI วิเคราะห์ไม่สำเร็จ\n\n${err?.message || 'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ'}\n\nกรุณาตรวจสอบ Gemini API Key และ Project`);
             } finally {
                 statusEl.classList.add('hidden');
                 btn.disabled = false;
@@ -1661,7 +1736,7 @@
             }
         }
 
-        /* 🔮 UPGRADED SMART AI VISUAL RECOGNITION (SEARCH POS) */
+        /* 🔮 CONTEXT-AWARE SMART AI VISUAL RECOGNITION (POS SEARCH) */
         function openAISearchModal() {
             document.getElementById('ai-modal').classList.remove('hidden');
             document.getElementById('ai-result-card').classList.add('hidden');
@@ -1696,15 +1771,24 @@
             notfoundCard.classList.add('hidden');
 
             try {
-                const productListStr = Object.keys(products).map(id => `{"id":"${id}", "name":"${products[id].name}"}`).join(', ');
-                const promptText = `วิเคราะห์รูปภาพสินค้านี้ว่าตรงกับสินค้าชิ้นไหนในคลังต่อไปนี้ที่สุด: [${productListStr}]
-ส่งคืนผลลัพธ์เป็น JSON ในรูปแบบนี้เท่านั้น:
+                // 1. สร้างรายการสินค้าทั้งหมดในระบบแนบส่งไปให้ AI ช่วยจับคู่ (Context-Aware Matching)
+                const inventoryListStr = Object.keys(products).map(id => `ID:"${id}" - ชื่อ:"${products[id].name}"`).join('\n');
+                
+                const promptText = `คุณคือ AI ช่วยขายสินค้าหน้าร้าน POS 
+หน้าที่ของคุณคือวิเคราะห์รูปภาพแล้วเปรียบเทียบกับรายการสินค้าที่มีในร้านต่อไปนี้:
+
+[รายการสินค้าในร้าน]
+${inventoryListStr || 'ไม่มีสินค้าในคลัง'}
+
+คำสั่ง:
+1. ดูว่ารูปภาพนี้ตรงกับสินค้า ID ไหนมากที่สุดในรายการข้างต้น
+2. ส่งคืนเฉพาะ JSON ในรูปแบบนี้เท่านั้น:
 {
-  "matched_id": "IDสินค้าที่ตรงกันที่สุด (ถ้าไม่แน่ใจหรือไม่มีให้ใส่ null)",
-  "detected_product_name": "ชื่อสินค้าภาษาไทยที่ AI ระบุได้จากรูป"
+  "matched_id": "IDสินค้าที่ตรงกัน (หากไม่ตรงกับรายการใดเลยให้ระบุ null)",
+  "detected_name": "ชื่อสินค้าภาษาไทยที่อ่านได้จากรูป"
 }`;
 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`;
 
                 const payload = {
                     contents: [{
@@ -1719,11 +1803,18 @@
 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-goog-api-key': GEMINI_API_KEY
+                    },
                     body: JSON.stringify(payload)
                 });
 
                 const result = await response.json();
+                if (!response.ok) {
+                    console.error('Gemini API Error:', result);
+                    throw new Error(result?.error?.message || `Gemini API Error ${response.status}`);
+                }
                 statusContainer.classList.add('hidden');
 
                 const responseText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -1747,8 +1838,8 @@
                         resultCard.classList.remove('hidden');
                         return;
                     } else {
-                        const guessedName = parsed.detected_product_name || 'สินค้าใหม่ทั่วไป';
-                        document.getElementById('ai-guessed-name').innerText = `AI ตรวจพบ: ${guessedName}`;
+                        const guessedName = parsed.detected_name || 'สินค้าใหม่ทั่วไป';
+                        document.getElementById('ai-guessed-name').innerText = `AI อ่านได้: ${guessedName}`;
                         
                         const newProdBtn = document.getElementById('ai-add-new-prod-btn');
                         newProdBtn.onclick = () => {
@@ -1770,7 +1861,7 @@
                 alert("AI ไม่สามารถอ่านภาพนี้ได้ กรุณาลองถ่ายใหม่อีกครั้งครับ");
             } catch (err) {
                 statusContainer.classList.add('hidden');
-                alert("การเชื่อมต่อ AI ขัดข้อง กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตครับ");
+                alert("การเชื่อมต่อ AI ขัดข้อง กรุณาตรวจสอบอินเทอร์เน็ตครับ");
             }
         }
 
